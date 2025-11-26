@@ -137,3 +137,35 @@ export const ensureBaseNetwork = async (): Promise<boolean> => {
     return false;
   }
 };
+
+export const connectWithMetaMask = async (): Promise<string> => {
+  const eth: any = (window as any).ethereum;
+  let provider = eth;
+  if (!provider) {
+    throw new Error("No wallet found");
+  }
+  if (provider.providers && Array.isArray(provider.providers)) {
+    const metaMask = provider.providers.find((p: any) => p.isMetaMask);
+    provider = metaMask || provider;
+  }
+  const accounts = await provider.request({ method: 'eth_requestAccounts' });
+  if (!accounts || accounts.length === 0) throw new Error("No accounts returned");
+  return accounts[0];
+};
+
+export const connectWithCoinbase = async (): Promise<string> => {
+  const eth: any = (window as any).ethereum;
+  let provider = eth;
+  if (!provider) {
+    throw new Error("No wallet found");
+  }
+  if (provider.providers && Array.isArray(provider.providers)) {
+    const coinbase = provider.providers.find((p: any) => p.isCoinbaseWallet);
+    provider = coinbase || provider;
+  } else if ((provider as any).isCoinbaseWallet) {
+    provider = provider;
+  }
+  const accounts = await provider.request({ method: 'eth_requestAccounts' });
+  if (!accounts || accounts.length === 0) throw new Error("No accounts returned");
+  return accounts[0];
+};

@@ -384,6 +384,38 @@ const App: React.FC = () => {
     }
   };
 
+  const handleConnectMetaMask = async () => {
+    if (farcasterUser) return;
+    try {
+      const address = await (await import('./services/web3Service')).connectWithMetaMask();
+      if (address) {
+        setIdentityId(address);
+        setUserProfile(loadProfile(address));
+        await ensureBaseNetwork();
+        handleReset();
+      }
+    } catch (err: any) {
+      console.error("Connection failed", err);
+      alert(err.message || "Failed to connect MetaMask.");
+    }
+  };
+
+  const handleConnectCoinbase = async () => {
+    if (farcasterUser) return;
+    try {
+      const address = await (await import('./services/web3Service')).connectWithCoinbase();
+      if (address) {
+        setIdentityId(address);
+        setUserProfile(loadProfile(address));
+        await ensureBaseNetwork();
+        handleReset();
+      }
+    } catch (err: any) {
+      console.error("Connection failed", err);
+      alert(err.message || "Failed to connect Coinbase Wallet.");
+    }
+  };
+
   const startHost = () => {
     // Only init if not already initialized
     if (!myPeerId) {
@@ -701,19 +733,22 @@ const App: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-white rounded-2xl max-w-sm w-full overflow-hidden">
             <div className="p-5">
-              <h3 className="text-xl font-bold text-center text-indigo-600">Connect Your Wallet</h3>
-              <p className="text-center text-slate-500 text-xs mt-1">Connect Wallet for the best experience</p>
+              <h3 className="text-xl font-bold text-center text-blue-500">Connect Your Wallet</h3>
+              <p className="text-center text-slate-400 text-xs mt-1">Connect Wallet for the best experience</p>
               <div className="mt-4 space-y-3">
-                <button onClick={() => { setSelectedWallet('farcaster'); setShowFcConfirm(true); }} className={`w-full px-4 py-3 rounded-lg bg-indigo-500 text-white font-bold flex items-center gap-2 ${selectedWallet === 'farcaster' ? 'ring-4 ring-black' : ''}`}>
+                <button onClick={() => { setSelectedWallet('farcaster'); setShowFcConfirm(true); }} className={`w-full px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-2 ${selectedWallet === 'farcaster' ? 'ring-4 ring-black' : ''}`}>
                   <span className="w-6 h-6 bg-white/20 rounded"></span> Farcaster
                 </button>
-                <button onClick={() => { setSelectedWallet('injected'); setShowConnectModal(false); handleConnectWallet(); }} className="w-full px-4 py-3 rounded-lg bg-indigo-400 text-white font-bold flex items-center gap-2">
-                  <span className="w-6 h-6 bg-white/20 rounded"></span> Injected
+                <button onClick={() => { setSelectedWallet('metamask'); setShowConnectModal(false); handleConnectMetaMask(); }} className="w-full px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold flex items-center gap-2">
+                  <span className="w-6 h-6 bg-white/20 rounded"></span> MetaMask
                 </button>
-                <button onClick={() => { setSelectedWallet('rabby'); setShowConnectModal(false); handleConnectWallet(); }} className="w-full px-4 py-3 rounded-lg bg-indigo-400 text-white font-bold flex items-center gap-2">
+                <button onClick={() => { setSelectedWallet('coinbase'); setShowConnectModal(false); handleConnectCoinbase(); }} className="w-full px-4 py-3 rounded-lg bg-blue-500 hover:bg-blue-400 text-white font-bold flex items-center gap-2">
+                  <span className="w-6 h-6 bg-white/20 rounded"></span> Coinbase Wallet
+                </button>
+                <button onClick={() => { setSelectedWallet('rabby'); setShowConnectModal(false); handleConnectWallet(); }} className="w-full px-4 py-3 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-bold flex items-center gap-2">
                   <span className="w-6 h-6 bg-white/20 rounded"></span> Rabby Wallet
                 </button>
-                <button onClick={() => { setSelectedWallet('haha'); }} className="w-full px-4 py-3 rounded-lg bg-indigo-400 text-white font-bold flex items-center gap-2">
+                <button onClick={() => { setSelectedWallet('haha'); }} className="w-full px-4 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold flex items-center gap-2">
                   <span className="w-6 h-6 bg-white/20 rounded"></span> HaHa Wallet
                 </button>
               </div>
