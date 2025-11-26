@@ -87,7 +87,6 @@ const App: React.FC = () => {
           const joinCode = params.get('join');
           if (joinCode) {
             setRemotePeerIdInput(joinCode);
-            // Auto join logic would go here, simplified:
             setTimeout(() => joinGame(joinCode), 1000);
           }
           return;
@@ -104,7 +103,7 @@ const App: React.FC = () => {
         const params = new URLSearchParams(window.location.search);
         const joinCode = params.get('join');
         if (joinCode) {
-          setRemotePeerIdInput(joinCode);
+          setShowConnectModal(true);
         }
 
       } catch (error) {
