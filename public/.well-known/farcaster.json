@@ -1,0 +1,23 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "Checkers",
+    "homeUrl": "https://newdama.vercel.app",
+    "iconUrl": "https://placehold.co/1024x1024/0f172a/ffffff.png?text=Checkers",
+    "splashImageUrl": "https://placehold.co/200x200/0f172a/ffffff.png?text=Checkers",
+    "splashBackgroundColor": "#0f172a",
+    "webhookUrl": "https://newdama.vercel.app/api/webhook",
+    "subtitle": "Play Checkers with friends on Farcaster",
+    "description": "Fast, social Checkers. Play vs AI or friends, share invites, and climb the leaderboard.",
+    "screenshotUrls": [
+      "https://placehold.co/1284x2778/0f172a/ffffff.png?text=Checkers+Screenshot+1"
+    ],
+    "primaryCategory": "games",
+    "tags": ["games", "checkers", "board", "social"],
+    "heroImageUrl": "https://placehold.co/1200x630/0f172a/ffffff.png?text=Checkers",
+    "tagline": "Fast social Checkers—invite, play, win",
+    "ogTitle": "Checkers — Play with friends",
+    "ogDescription": "Jump into a quick match, invite friends, or practice with AI hints.",
+    "ogImageUrl": "https://placehold.co/1200x630/0f172a/ffffff.png?text=Checkers"
+  }
+}
