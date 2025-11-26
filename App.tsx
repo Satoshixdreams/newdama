@@ -479,7 +479,7 @@ const App: React.FC = () => {
   const leaderboardData = getLeaderboard(userProfile);
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center p-2 md:p-6 gap-6 overflow-y-auto">
+    <div className="min-h-screen bg-slate-900 flex flex-col items-center p-2 md:p-6 gap-6 overflow-y-auto pb-24 md:pb-10">
 
       {/* Board Section - First */}
       <div className="flex flex-col items-center justify-center w-full max-w-[600px]">
