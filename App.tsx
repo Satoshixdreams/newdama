@@ -9,7 +9,7 @@ import { getBestMove } from './utils/aiLogic';
 import { connectWallet, checkIfWalletIsConnected, listenToAccountChanges, ensureBaseNetwork } from './services/web3Service';
 import { peerService, PeerMessage } from './services/peerService';
 import { initFarcaster, getFarcasterContext, FarcasterUser, openExternalUrl, addMiniAppAndEnableNotifications, sendSelfNotification } from './services/farcasterService';
-import { RotateCcw, Trophy, BrainCircuit, Cpu, User, BookOpen, X, Wallet, Repeat, Globe, ArrowRight, Loader2, BarChart3, Share2, Link, CheckCheck, Bell, Smartphone, Plus } from 'lucide-react';
+import { RotateCcw, Trophy, BrainCircuit, Cpu, User, BookOpen, X, Wallet, Repeat, Globe, ArrowRight, Loader2, BarChart3, Share2, Link, CheckCheck, Bell, Smartphone, Plus, UserPlus } from 'lucide-react';
 
 const App: React.FC = () => {
   // Game State
@@ -52,6 +52,8 @@ const App: React.FC = () => {
   const [myOnlineColor, setMyOnlineColor] = useState<Player | null>(null);
   const [showJoinInput, setShowJoinInput] = useState(false);
   const [shareBtnLabel, setShareBtnLabel] = useState("Share Invite");
+  const [inviteUsername, setInviteUsername] = useState("");
+  const [inviteBtnLabel, setInviteBtnLabel] = useState("Invite Friend");
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [showFcConfirm, setShowFcConfirm] = useState(false);
@@ -467,6 +469,21 @@ const App: React.FC = () => {
     setTimeout(() => setShareBtnLabel("Share Invite"), 2000);
   };
 
+  const inviteFriend = async () => {
+    if (!myPeerId) return;
+    if (!farcasterUser) { setInviteBtnLabel('Farcaster required'); setTimeout(() => setInviteBtnLabel('Invite Friend'), 2000); return; }
+    const uname = inviteUsername.replace(/^@/, '').trim();
+    if (!uname) { setInviteBtnLabel('Enter @username'); setTimeout(() => setInviteBtnLabel('Invite Friend'), 1500); return; }
+    const url = new URL(window.location.href);
+    url.searchParams.set('join', myPeerId);
+    const shareUrl = url.toString();
+    const shareText = `@${uname} Play Checkers vs me — tap to join!`;
+    setInviteBtnLabel('Opening...');
+    const composeUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`;
+    openExternalUrl(composeUrl);
+    setTimeout(() => setInviteBtnLabel('Invite Friend'), 2000);
+  };
+
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-slate-400 gap-4">
@@ -624,6 +641,20 @@ const App: React.FC = () => {
                     <button onClick={() => setShowConnectModal(true)} className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded flex items-center justify-center gap-2 mb-2 shadow-lg shadow-indigo-500/20 transition-all active:scale-95">
                       <Link className="w-4 h-4" /> Connect Farcaster to Invite
                     </button>
+                  )}
+
+                  {farcasterUser && (
+                    <div className="flex gap-2 mt-1">
+                      <input
+                        value={inviteUsername}
+                        onChange={(e) => setInviteUsername(e.target.value)}
+                        placeholder="@friend"
+                        className="flex-1 bg-black/30 border border-slate-600 rounded px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500 text-left"
+                      />
+                      <button onClick={inviteFriend} className="px-4 bg-violet-600 hover:bg-violet-500 text-white text-xs rounded font-bold flex items-center gap-1">
+                        <UserPlus className="w-3 h-3" /> {inviteBtnLabel}
+                      </button>
+                    </div>
                   )}
 
                   {farcasterUser && (
