@@ -22,6 +22,36 @@ export const isValidPos = (pos: Position): boolean => {
   return pos.row >= 0 && pos.row < BOARD_SIZE && pos.col >= 0 && pos.col < BOARD_SIZE;
 };
 
+// Helper to calculate the maximum capture chain length from a given move
+const getCaptureChainLength = (board: BoardState, startMove: Move): number => {
+  // Simulate the move
+  const { newBoard } = applyMove(board, startMove);
+
+  // The piece is now at startMove.to
+  const piece = newBoard[startMove.to.row][startMove.to.col];
+  if (!piece) return 0;
+
+  // Find valid captures from this new position
+  // We use getPieceMoves directly to avoid infinite recursion of getValidMoves calling this
+  const nextMoves = getPieceMoves(newBoard, startMove.to, piece);
+  const captureMoves = nextMoves.filter(m => m.isCapture);
+
+  if (captureMoves.length === 0) {
+    return 0;
+  }
+
+  // Recursively find the max length
+  let maxSubLength = 0;
+  for (const nextMove of captureMoves) {
+    const len = 1 + getCaptureChainLength(newBoard, nextMove);
+    if (len > maxSubLength) {
+      maxSubLength = len;
+    }
+  }
+
+  return maxSubLength;
+};
+
 export const getValidMoves = (board: BoardState, player: Player, fromPos?: Position | null): Move[] => {
   let moves: Move[] = [];
 
@@ -44,11 +74,22 @@ export const getValidMoves = (board: BoardState, player: Player, fromPos?: Posit
     }
   }
 
-  // Checkers Rule: Forced Captures
-  // If ANY capture is available on the board, you MUST take a capture move.
+  // Checkers Rule: Forced Captures & Max Capture
   const captureMoves = moves.filter(m => m.isCapture);
+
   if (captureMoves.length > 0) {
-    return captureMoves;
+    // Calculate the full chain length for each capture move
+    const movesWithLengths = captureMoves.map(move => {
+      // Base length is 1 (the current move) + any subsequent captures
+      const length = 1 + getCaptureChainLength(board, move);
+      return { move, length };
+    });
+
+    // Find the maximum length
+    const maxLength = Math.max(...movesWithLengths.map(m => m.length));
+
+    // Return only moves that lead to the maximum capture chain
+    return movesWithLengths.filter(m => m.length === maxLength).map(m => m.move);
   }
 
   return moves;
@@ -135,7 +176,7 @@ export const getPieceMoves = (board: BoardState, pos: Position, piece: Piece): M
   } else {
     // --- MAN LOGIC ---
     allowedDirections.forEach(d => {
-      // 1. Simple Move
+      // 1. Simple Move لا
       const targetPos = { row: pos.row + d.r, col: pos.col + d.c };
       if (isValidPos(targetPos) && board[targetPos.row][targetPos.col] === null) {
         moves.push({ from: pos, to: targetPos, isCapture: false });
@@ -180,7 +221,7 @@ export const applyMove = (currentBoard: BoardState, move: Move): { newBoard: Boa
     newBoard[move.capturedPos.row][move.capturedPos.col] = null;
   }
 
-  // Promotion
+  // Promotion (Standard)
   let promoted = false;
   if (!piece.isKing) {
     // In Checkers, promotion stops movement immediately usually, but checking end rows:
@@ -191,14 +232,36 @@ export const applyMove = (currentBoard: BoardState, move: Move): { newBoard: Boa
     }
   }
 
+  // --- Custom Rule: Last Man Standing ---
+  // If a player has only 1 piece left, it becomes a King automatically.
+  let redPieces: Piece[] = [];
+  let whitePieces: Piece[] = [];
+
+  for (let r = 0; r < BOARD_SIZE; r++) {
+    for (let c = 0; c < BOARD_SIZE; c++) {
+      const p = newBoard[r][c];
+      if (p) {
+        if (p.player === Player.RED) redPieces.push(p);
+        else whitePieces.push(p);
+      }
+    }
+  }
+
+  if (redPieces.length === 1 && !redPieces[0].isKing) {
+    redPieces[0].isKing = true;
+  }
+
+  if (whitePieces.length === 1 && !whitePieces[0].isKing) {
+    whitePieces[0].isKing = true;
+  }
+
   return { newBoard, promoted };
 };
 
-export const checkWinner = (board: BoardState): Player | null => {
+export const checkWinner = (board: BoardState, currentPlayer?: Player): Player | null => {
   let redCount = 0;
   let whiteCount = 0;
 
-  // Simple count is often enough for Game Over
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
       const p = board[r][c];
@@ -207,12 +270,16 @@ export const checkWinner = (board: BoardState): Player | null => {
     }
   }
 
-  // Also check for no moves
   if (redCount === 0) return Player.WHITE;
   if (whiteCount === 0) return Player.RED;
 
-  // To be 100% accurate we should check if current player has valid moves
-  // but this is expensive to run every render, so we rely on turn logic mostly.
+  // Stalemate check: If current player has no moves, they lose.
+  if (currentPlayer) {
+    const moves = getValidMoves(board, currentPlayer);
+    if (moves.length === 0) {
+      return currentPlayer === Player.RED ? Player.WHITE : Player.RED;
+    }
+  }
 
   return null;
 };

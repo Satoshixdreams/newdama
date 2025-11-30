@@ -1,0 +1,33 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjUyMDUxNCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweEYyMDRCOWU2MDQwZDAxZDg0RGZFRkMzMTRhOENFZDM0OEE4OEJFNTkifQ",
+    "payload": "eyJkb21haW4iOiJuZXdkYW1hLnZlcmNlbC5hcHAifQ",
+    "signature": "dwkaAjmZDJwhaiGgYwugVmhoAvQiQYThhGNJwHkw1ghmEKHNA2f+iFFozwyPsEYfqiBBVeg2m2S/HgdH8sR2+xw="
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Checkers",
+    "homeUrl": "https://newdama.vercel.app",
+    "iconUrl": "https://newdama.vercel.app/checkers-logo.png",
+    "splashImageUrl": "https://newdama.vercel.app/checkers-logo.png",
+    "splashBackgroundColor": "#0f172a",
+  "webhookUrl": "https://newdama.vercel.app/api/webhook",
+  "subtitle": "Play Checkers on Farcaster",
+  "description": "Fast, social Checkers. Play vs AI or friends, share invites, and climb the leaderboard.",
+    "screenshotUrls": [
+      "https://newdama.vercel.app/checkers-logo.png"
+    ],
+    "primaryCategory": "games",
+    "tags": ["games", "checkers", "board", "social"],
+    "heroImageUrl": "https://newdama.vercel.app/checkers-logo.png",
+    "castShareUrl": "https://newdama.vercel.app/?castShare=1",
+    "tagline": "Invite. Play. Win.",
+    "ogTitle": "Checkers — Play with friends",
+    "ogDescription": "Jump into a quick match, invite friends, or practice with AI hints.",
+    "ogImageUrl": "https://newdama.vercel.app/checkers-logo.png"
+  }
+  ,
+  "baseBuilder": {
+    "ownerAddress": "0x2fc3bE228078Cbef235B9eb44d1eEB4943209f95"
+  }
+}

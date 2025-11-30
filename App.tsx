@@ -146,7 +146,7 @@ const App: React.FC = () => {
 
   // Check Winner & Update Stats
   useEffect(() => {
-    const win = checkWinner(board);
+    const win = checkWinner(board, currentPlayer);
     if (win && !winner) {
       setWinner(win);
       const isUserWin = (gameMode === GameMode.ONLINE) ? win === myOnlineColor : win === HUMAN_PLAYER;
@@ -224,7 +224,7 @@ const App: React.FC = () => {
 
   const executeMove = (move: Move, isRemote: boolean = false) => {
     setHistory(prev => [...prev, { board, currentPlayer, selectedPos, validMoves, mustCaptureFrom, winner }]);
-    const { newBoard, promoted } = applyMove(board, move);
+    const { newBoard } = applyMove(board, move);
     setBoard(newBoard);
     if (!isRemote) {
       setTurnWarning("");
@@ -238,7 +238,9 @@ const App: React.FC = () => {
     let nextPlayer = currentPlayer;
     let nextMustCaptureFrom: Position | null = null;
 
-    if (move.isCapture && !promoted) {
+    // Turkish Dama: If you capture, check if you can capture again.
+    // Even if you promoted, if you can capture as a King, you must continue.
+    if (move.isCapture) {
       const followUpMoves = getValidMoves(newBoard, currentPlayer, move.to).filter(m => m.isCapture);
       if (followUpMoves.length > 0) {
         nextMustCaptureFrom = move.to;
@@ -438,49 +440,74 @@ const App: React.FC = () => {
   };
 
   const joinGame = (code?: string) => {
-    if (!farcasterUser) { setShowConnectModal(true); return; }
+    // Allow joining without Farcaster login (Guest mode)
+    // if (!farcasterUser) { setShowConnectModal(true); return; } 
+
     const codeToJoin = code || remotePeerIdInput;
     if (!codeToJoin) return;
+
     // Ensure mode is Online
     if (gameMode !== GameMode.ONLINE) setGameMode(GameMode.ONLINE);
 
     setMyOnlineColor(Player.WHITE);
     setIsRotated(true);
+
+    // Show loading state or toast here if possible
+    console.log("Connecting to:", codeToJoin);
+
     peerService.connect(codeToJoin, () => {
       setIsConnected(true);
-      alert("Connected to game!");
+      // alert("Connected to game!"); // Removed alert for smoother experience
     });
   };
 
   const shareInvite = async () => {
     if (!myPeerId) return;
-    if (!farcasterUser) {
-      setShareBtnLabel('Farcaster required');
-      setTimeout(() => setShareBtnLabel('Share Invite'), 2000);
-      return;
-    }
+
     const url = new URL(window.location.href);
     url.searchParams.set('join', myPeerId);
     const shareUrl = url.toString();
-    const shareText = gameMode === GameMode.ONLINE ? "Playing now: Checkers 🟢 vs ⚪️ — join me!" : "Training Checkers — come watch or play!";
-    setShareBtnLabel("Opening...");
-    const composeUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`;
-    openExternalUrl(composeUrl);
-    setTimeout(() => setShareBtnLabel("Share Invite"), 2000);
+    const shareText = "Play Checkers with me! 🔴 vs ⚪️";
+
+    if (farcasterUser) {
+      // If Farcaster user, open Warpcast compose
+      setShareBtnLabel("Opening Warpcast...");
+      const composeUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`;
+      openExternalUrl(composeUrl);
+      setTimeout(() => setShareBtnLabel("Share Invite"), 2000);
+    } else {
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setShareBtnLabel("Link Copied!");
+      } catch (err) {
+        setShareBtnLabel("Failed to copy");
+      }
+      setTimeout(() => setShareBtnLabel("Share Invite"), 2000);
+    }
   };
 
   const inviteFriend = async () => {
     if (!myPeerId) return;
-    if (!farcasterUser) { setInviteBtnLabel('Farcaster required'); setTimeout(() => setInviteBtnLabel('Invite Friend'), 2000); return; }
+    // Keep this one strict or fallback to copy as well? Let's keep strict for direct DM/mention intent
+    if (!farcasterUser) {
+      // Fallback to copy if not logged in
+      shareInvite();
+      return;
+    }
+
     const uname = inviteUsername.replace(/^@/, '').trim();
     if (!uname) { setInviteBtnLabel('Enter @username'); setTimeout(() => setInviteBtnLabel('Invite Friend'), 1500); return; }
+
     const url = new URL(window.location.href);
     url.searchParams.set('join', myPeerId);
     const shareUrl = url.toString();
     const shareText = `@${uname} Play Checkers vs me — tap to join!`;
+
     setInviteBtnLabel('Opening...');
     const composeUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`;
     openExternalUrl(composeUrl);
+    setTimeout(() => setInviteBtnLabel('Invite Friend'), 2000);
     setTimeout(() => setInviteBtnLabel('Invite Friend'), 2000);
   };
 
