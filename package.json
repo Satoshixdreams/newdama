@@ -9,6 +9,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@farcaster/frame-sdk": "^0.1.12",
     "@google/genai": "^1.30.0",
