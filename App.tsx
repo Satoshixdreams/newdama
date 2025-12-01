@@ -585,7 +585,7 @@ const App: React.FC = () => {
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-baseline mb-1">
               <h2 className="font-bold text-white text-base truncate pl-2">
-                {userProfile.username ? `@${userProfile.username}` : userProfile.rankTitle}
+                {userProfile.username ? `@${userProfile.username}` : userProfile.rankTitle} <span className="text-[10px] text-slate-500 ml-1">(v2.1)</span>
               </h2>
               <span className="text-xs text-slate-400 font-mono shrink-0">LVL {userProfile.level}</span>
             </div>
