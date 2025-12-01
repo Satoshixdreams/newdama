@@ -1,5 +1,5 @@
 {
-  "frame": {
+  "miniapp": {
     "version": "1",
     "name": "Checkers",
     "iconUrl": "https://damagames.vercel.app/checkers-logo.png",
