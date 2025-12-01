@@ -1,8 +1,8 @@
 {
   "accountAssociation": {
-    "header": "",
-    "payload": "",
-    "signature": ""
+    "header": "eyJmaWQiOjUyMDUxNCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweGY1MzIxYmJhNTE1MThGMDNkZEM0MDU2Q0JjOTMxRDg5NTZjNDgyYUMifQ",
+    "payload": "eyJkb21haW4iOiJkYW1hZ2FtZXMudmVyY2VsLmFwcCJ9",
+    "signature": "xlsOnBoDNASWC4/kMWA/BlW1EW5loU+UzGz3MeiVVrgH5njC54BE8qg+HN6R1nOP0ZqHnrcxARjib2Da1AX7uxw="
   },
   "miniapp": {
     "name": "Checkers",
