@@ -4,11 +4,7 @@ import sdk from '@farcaster/frame-sdk';
 export const notifyFarcasterAppReady = async () => {
   try {
     // Inform the Farcaster client that the frame is ready to be displayed
-    // We race this against a timeout so the app doesn't hang if the SDK is unresponsive
-    await Promise.race([
-      sdk.actions.ready(),
-      new Promise((resolve) => setTimeout(resolve, 500))
-    ]);
+    await sdk.actions.ready();
   } catch (e) {
     console.debug("Farcaster SDK ready call failed (likely not in a frame)", e);
   }
