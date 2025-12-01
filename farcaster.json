@@ -27,7 +27,8 @@
     "ogTitle": "Checkers — Play with friends",
     "ogDescription": "Jump into a quick match, invite friends, or practice with AI hints.",
     "ogImageUrl": "https://damagames.vercel.app/checkers-logo.png",
-    "castShareUrl": "https://damagames.vercel.app/?castShare=1"
+    "castShareUrl": "https://damagames.vercel.app/?castShare=1",
+    "noindex": false
   },
   "accountAssociation": {
     "header": "eyJmaWQiOjUyMDUxNCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweGY1MzIxYmJhNTE1MThGMDNkZEM0MDU2Q0JjOTMxRDg5NTZjNDgyYUMifQ",
