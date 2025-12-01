@@ -1,0 +1,36 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "Checkers",
+    "iconUrl": "https://damagames.vercel.app/checkers-logo.png",
+    "homeUrl": "https://damagames.vercel.app",
+    "imageUrl": "https://damagames.vercel.app/checkers-logo.png",
+    "buttonTitle": "Play Checkers",
+    "splashImageUrl": "https://damagames.vercel.app/checkers-logo.png",
+    "splashBackgroundColor": "#0f172a",
+    "webhookUrl": "https://damagames.vercel.app/api/webhook",
+    "subtitle": "Play Checkers on Farcaster",
+    "description": "Fast, social Checkers. Play vs AI or friends, share invites, and climb the leaderboard.",
+    "screenshotUrls": [
+      "https://damagames.vercel.app/checkers-logo.png"
+    ],
+    "primaryCategory": "games",
+    "tags": [
+      "games",
+      "checkers",
+      "board",
+      "social",
+      "play"
+    ],
+    "heroImageUrl": "https://damagames.vercel.app/checkers-logo.png",
+    "tagline": "Invite. Play. Win.",
+    "ogTitle": "Checkers — Play with friends",
+    "ogDescription": "Jump into a quick match, invite friends, or practice with AI hints.",
+    "ogImageUrl": "https://damagames.vercel.app/checkers-logo.png",
+    "castShareUrl": "https://damagames.vercel.app/?castShare=1",
+    "noindex": false
+  },
+  "baseBuilder": {
+    "ownerAddress": "0x2fc3bE228078Cbef235B9eb44d1eEB4943209f95"
+  }
+}
