@@ -8,7 +8,7 @@ import { loadProfile, saveProfile, calculateNewStats, getLeaderboard } from './s
 import { getBestMove } from './utils/aiLogic';
 import { connectWallet, checkIfWalletIsConnected, listenToAccountChanges, ensureBaseNetwork } from './services/web3Service';
 import { peerService, PeerMessage } from './services/peerService';
-import { initFarcaster, getFarcasterContext, FarcasterUser, openExternalUrl, addMiniAppAndEnableNotifications, sendSelfNotification } from './services/farcasterService';
+import { notifyFarcasterAppReady, getFarcasterContext, FarcasterUser, openExternalUrl, addMiniAppAndEnableNotifications, sendSelfNotification } from './services/farcasterService';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { RotateCcw, Trophy, BrainCircuit, Cpu, User, BookOpen, X, Wallet, Repeat, Globe, ArrowRight, Loader2, BarChart3, Share2, Link, CheckCheck, Bell, Smartphone, Plus, UserPlus } from 'lucide-react';
 
@@ -71,7 +71,7 @@ const App: React.FC = () => {
     const initApp = async () => {
       try {
         // 1. Try Farcaster
-        await initFarcaster();
+        // await initFarcaster(); // Moved to after initialization
         const fcUser = await getFarcasterContext();
 
         if (fcUser) {
@@ -132,6 +132,13 @@ const App: React.FC = () => {
       peerService.destroy();
     };
   }, []);
+
+  // Notify Farcaster that the app is ready once initialization is done
+  useEffect(() => {
+    if (!isInitializing) {
+      notifyFarcasterAppReady();
+    }
+  }, [isInitializing]);
 
   // Initialize Online Listener
   useEffect(() => {
@@ -832,7 +839,7 @@ const App: React.FC = () => {
               <div className="w-24 h-40 mx-auto bg-slate-800 rounded-xl mb-4"></div>
               <h3 className="text-white text-xl font-bold text-center">Confirm it's you</h3>
               <p className="text-slate-400 text-xs text-center mt-1">Click Continue below and tap Approve on your Farcaster mobile app to start using your wallet on web.</p>
-              <button onClick={async () => { try { await initFarcaster(); const fcUser = await getFarcasterContext(); if (fcUser) { const fcId = `fc-${fcUser.fid}`; setFarcasterUser(fcUser); setIdentityId(fcId); setUserProfile(loadProfile(fcId)); setShowFcConfirm(false); setShowConnectModal(false); setShowAddMiniApp(true); } } catch { } }} className="mt-6 w-full py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-full">Continue</button>
+              <button onClick={async () => { try { await notifyFarcasterAppReady(); const fcUser = await getFarcasterContext(); if (fcUser) { const fcId = `fc-${fcUser.fid}`; setFarcasterUser(fcUser); setIdentityId(fcId); setUserProfile(loadProfile(fcId)); setShowFcConfirm(false); setShowConnectModal(false); setShowAddMiniApp(true); } } catch { } }} className="mt-6 w-full py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-full">Continue</button>
               <p className="text-slate-500 text-[10px] text-center mt-2">You'll stay signed in for 30 days on this browser.</p>
               <button onClick={() => { setShowFcConfirm(false); }} className="mt-2 w-full py-2 text-slate-500">Cancel</button>
             </div>
