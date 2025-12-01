@@ -5,6 +5,10 @@ export const notifyFarcasterAppReady = async () => {
   try {
     // Inform the Farcaster client that the frame is ready to be displayed
     await sdk.actions.ready();
+
+    // Retry a few times to ensure the signal is received in case of race conditions
+    setTimeout(() => sdk.actions.ready().catch(() => { }), 500);
+    setTimeout(() => sdk.actions.ready().catch(() => { }), 1000);
   } catch (e) {
     console.debug("Farcaster SDK ready call failed (likely not in a frame)", e);
   }
